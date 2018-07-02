@@ -1,0 +1,71 @@
+Vagrant.configure("2") do |config|
+
+  # global  base box
+  config.vm.box = "centos/7"
+
+  # set timeout
+
+  # global shell for all vm
+  # config.vm.provision "shell", inline: "echo start"
+
+  # difine vm "web"
+  config.vm.define "web" do |web|
+  	# belong to vm web shell
+    web.vm.provision "shell", inline: "echo web creating"
+
+    # run scripts on vm to special path
+    web.vm.provision "shell", path: "scripts/install-docker.sh"
+
+
+    # difine vm name for vagrant CLI to display
+    web.vm.hostname = "web"
+
+    # add synce_folder
+    web.vm.synced_folder "src/", "/home/vagrant/src", type: "rsync"
+
+    
+    # custom  for provider 
+    config.vm.provider "virtualbox" do |vt|
+      # difine name for  virtualbox gui to display
+      vt.name = "web"
+
+      # difine memory for vm on virtualbox
+      vt.memory = 512
+
+      # difine cpu for vm on virtualbox
+      # vt.cpu = 2
+    end
+
+    # difine static ip for vm "web"
+    web.vm.network "private_network", ip: "192.168.33.10"
+  end
+
+  # difine vm "db"
+  config.vm.define "db" do |db|
+    # belong to vm web shell
+    db.vm.provision "shell", inline: "echo db creating"
+
+    # difine vm name for vagrant CLI to display
+    db.vm.hostname = "db"
+
+    
+    # custom  for provider 
+    config.vm.provider "virtualbox" do |vt|
+      # difine name for  virtualbox gui to display
+      vt.name = "db"
+
+      # difine memory for vm on virtualbox
+      vt.memory = 512
+
+      # difine cpu for vm on virtualbox
+      # vt.cpu = 2
+    end
+
+    # difine static ip for vm "web"
+    db.vm.network "private_network", ip: "192.168.33.11"
+  end
+
+  # global shell for all vm
+  config.vm.provision "shell", inline: "echo finsh"
+
+end
